@@ -1,0 +1,64 @@
+@model IEnumerable<TuristickaAgencija.Mvc.Models.Destinacija>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>@(ViewData["Naslov"] ?? "Destinacije")</h1>
+<p>
+    <a asp-action="Create" class="btn btn-primary">Dodaj novu destinaciju</a>
+    <a asp-action="Popularne" class="btn btn-secondary">Popularne destinacije</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Sve destinacije</a>
+</p>
+
+<form asp-action="PoDrzavi" method="get" class="form-inline mb-3">
+    <div class="input-group">
+        <input type="text" name="drzava" class="form-control" placeholder="Unesite državu" />
+        <button type="submit" class="btn btn-primary">Pretraži</button>
+    </div>
+</form>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Naziv)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Drzava)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Opis)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Popularna)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Naziv)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Drzava)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Opis)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Popularna)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

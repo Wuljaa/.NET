@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Početna";
+}
+
+<div class="text-center mb-4">
+    <h1 class="display-4">Turistička agencija</h1>
+    <p>Dobrodošli u aplikaciju za upravljanje turističkim destinacijama i aranžmanima.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Destinacije</h5>
+                <p class="card-text">
+                    Pregled, unos, izmjena i brisanje destinacija.
+                </p>
+                <a asp-controller="Destinacije" asp-action="Index" class="btn btn-primary">
+                    Otvori destinacije
+                </a>
+                <a asp-controller="Destinacije" asp-action="Popularne" class="btn btn-secondary">
+                    Popularne destinacije
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Aranžmani</h5>
+                <p class="card-text">
+                    Pregled, unos, izmjena i brisanje turističkih aranžmana.
+                </p>
+                <a asp-controller="Aranzmani" asp-action="Index" class="btn btn-primary">
+                    Otvori aranžmane
+                </a>
+                <a asp-controller="Aranzmani" asp-action="Nadolazeci" class="btn btn-secondary">
+                    Nadolazeći aranžmani
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

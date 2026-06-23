@@ -1,0 +1,31 @@
+@model TuristickaAgencija.Mvc.Models.Aranzman
+
+@{
+    ViewData["Title"] = "Uredi aranžman";
+}
+
+<h1>Uredi aranžman</h1>
+
+<h4>Aranžman</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <partial name="_AranzmanFormPartial" model="Model" />
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Spremi promjene" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
