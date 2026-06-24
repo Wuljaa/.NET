@@ -1,16 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using TuristickaAgencija.Mvc.Data;
 using TuristickaAgencija.Mvc.Services;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+.AddEntityFrameworkStores<AppDbContext>();
+
 builder.Services.AddScoped<IDestinacijaService, DestinacijaService>();
 builder.Services.AddScoped<IAranzmanService, AranzmanService>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ITrenutniKorisnikService, TrenutniKorisnikService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 
 var app = builder.Build();
@@ -26,7 +36,9 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapStaticAssets();
 
@@ -35,5 +47,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapRazorPages();
 
 app.Run();

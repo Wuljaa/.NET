@@ -7,6 +7,19 @@
     <p>Dobrodošli u aplikaciju za upravljanje turističkim destinacijama i aranžmanima.</p>
 </div>
 
+@if ((bool)(ViewData["JePrijavljen"] ?? false))
+{
+    <div class="alert alert-success">
+        Prijavljeni ste kao: @ViewData["KorisnikEmail"]
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        Trenutno niste prijavljeni.
+    </div>
+}
+
 <div class="row">
     <div class="col-md-6">
         <div class="card mb-3">

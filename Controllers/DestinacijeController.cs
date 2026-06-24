@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TuristickaAgencija.Mvc.Data; //ne treba ovo (ostalo od scaffoldinga)
 using TuristickaAgencija.Mvc.Models;
 using TuristickaAgencija.Mvc.Services;
 
@@ -45,6 +40,7 @@ namespace TuristickaAgencija.Mvc.Controllers
             ViewData["Naslov"] = $"Destinacije u {drzava}";
             return View("Index", destinacije);
         }
+
         // GET: Destinacije/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -54,6 +50,7 @@ namespace TuristickaAgencija.Mvc.Controllers
             }
 
             var destinacija = await _destinacijaService.GetByIdAsync(id.Value);
+
             if (destinacija == null)
             {
                 return NotFound();
@@ -63,16 +60,16 @@ namespace TuristickaAgencija.Mvc.Controllers
         }
 
         // GET: Destinacije/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Destinacije/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Naziv,Drzava,Opis,Popularna")] Destinacija destinacija)
         {
             if (ModelState.IsValid)
@@ -80,10 +77,12 @@ namespace TuristickaAgencija.Mvc.Controllers
                 await _destinacijaService.CreateAsync(destinacija);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(destinacija);
         }
 
         // GET: Destinacije/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,18 +91,19 @@ namespace TuristickaAgencija.Mvc.Controllers
             }
 
             var destinacija = await _destinacijaService.GetByIdAsync(id.Value);
+
             if (destinacija == null)
             {
                 return NotFound();
             }
+
             return View(destinacija);
         }
 
         // POST: Destinacije/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Drzava,Opis,Popularna")] Destinacija destinacija)
         {
             if (id != destinacija.Id)
@@ -128,12 +128,15 @@ namespace TuristickaAgencija.Mvc.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(destinacija);
         }
 
         // GET: Destinacije/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -142,6 +145,7 @@ namespace TuristickaAgencija.Mvc.Controllers
             }
 
             var destinacija = await _destinacijaService.GetByIdAsync(id.Value);
+
             if (destinacija == null)
             {
                 return NotFound();
@@ -153,12 +157,13 @@ namespace TuristickaAgencija.Mvc.Controllers
         // POST: Destinacije/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _destinacijaService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
-        
+
         private bool DestinacijaExists(int id)
         {
             return _destinacijaService.Exists(id);

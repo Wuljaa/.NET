@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using TuristickaAgencija.Mvc.Data;
 using TuristickaAgencija.Mvc.Models;
 using TuristickaAgencija.Mvc.Services;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Formats.Asn1;
-
 
 namespace TuristickaAgencija.Mvc.Controllers
 {
@@ -18,23 +11,17 @@ namespace TuristickaAgencija.Mvc.Controllers
     {
         private readonly IAranzmanService _aranzmanService;
         private readonly IDestinacijaService _destinacijaService;
+
         public AranzmaniController(IAranzmanService aranzmanService, IDestinacijaService destinacijaService)
         {
             _aranzmanService = aranzmanService;
             _destinacijaService = destinacijaService;
         }
-        public async Task<IActionResult> Jeftini(decimal maxCijena = 500)
-        {
-            var aranzmani = await _aranzmanService.GetByMaxCijenaAsync(maxCijena);
-            ViewData["Naslov"] = $"Aranzmani sa cijenom do {maxCijena} €";
-            return View("Index",aranzmani);
-        }
 
-        public async Task<IActionResult> Nadolazeci()
+        private async Task NapuniDestinacijeDropDown()
         {
-            var aranzmani = await _aranzmanService.GetNadolazeciAsync();
-            ViewData["Naslov"] = "Nadolazeci aranzmani";
-            return View("Index", aranzmani);
+            var destinacije = await _destinacijaService.GetAllAsync();
+            ViewData["DestinacijaId"] = new SelectList(destinacije, "Id", "Naziv");
         }
 
         // GET: Aranzmani
@@ -44,10 +31,22 @@ namespace TuristickaAgencija.Mvc.Controllers
             return View(aranzmani);
         }
 
-        private async Task NapuniDestinacije()
+        public async Task<IActionResult> Jeftini(decimal maxCijena = 500)
         {
-            var destinacije = await _destinacijaService.GetAllAsync();
-            ViewData["DestinacijaId"] = new SelectList(destinacije, "Id", "Naziv");
+            var aranzmani = await _aranzmanService.GetByMaxCijenaAsync(maxCijena);
+
+            ViewData["Naslov"] = $"Aranžmani do {maxCijena} €";
+
+            return View("Index", aranzmani);
+        }
+
+        public async Task<IActionResult> Nadolazeci()
+        {
+            var aranzmani = await _aranzmanService.GetNadolazeciAsync();
+
+            ViewData["Naslov"] = "Nadolazeći aranžmani";
+
+            return View("Index", aranzmani);
         }
 
         // GET: Aranzmani/Details/5
@@ -59,6 +58,7 @@ namespace TuristickaAgencija.Mvc.Controllers
             }
 
             var aranzman = await _aranzmanService.GetByIdAsync(id.Value);
+
             if (aranzman == null)
             {
                 return NotFound();
@@ -68,17 +68,17 @@ namespace TuristickaAgencija.Mvc.Controllers
         }
 
         // GET: Aranzmani/Create
+        [Authorize]
         public async Task<IActionResult> Create()
         {
-            await NapuniDestinacije();
+            await NapuniDestinacijeDropDown();
             return View();
         }
 
         // POST: Aranzmani/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Naziv,Opis,Cijena,DatumPolaska,DatumPovratka,DestinacijaId")] Aranzman aranzman)
         {
             if (ModelState.IsValid)
@@ -86,11 +86,13 @@ namespace TuristickaAgencija.Mvc.Controllers
                 await _aranzmanService.CreateAsync(aranzman);
                 return RedirectToAction(nameof(Index));
             }
-            await NapuniDestinacije();
+
+            await NapuniDestinacijeDropDown();
             return View(aranzman);
         }
 
         // GET: Aranzmani/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -99,19 +101,20 @@ namespace TuristickaAgencija.Mvc.Controllers
             }
 
             var aranzman = await _aranzmanService.GetByIdAsync(id.Value);
+
             if (aranzman == null)
             {
                 return NotFound();
             }
-            await NapuniDestinacije();
+
+            await NapuniDestinacijeDropDown();
             return View(aranzman);
         }
 
         // POST: Aranzmani/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Naziv,Opis,Cijena,DatumPolaska,DatumPovratka,DestinacijaId")] Aranzman aranzman)
         {
             if (id != aranzman.Id)
@@ -122,7 +125,7 @@ namespace TuristickaAgencija.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {     
+                {
                     await _aranzmanService.UpdateAsync(aranzman);
                 }
                 catch (DbUpdateConcurrencyException)
@@ -136,13 +139,16 @@ namespace TuristickaAgencija.Mvc.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            await NapuniDestinacije();
+
+            await NapuniDestinacijeDropDown();
             return View(aranzman);
         }
 
         // GET: Aranzmani/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -151,6 +157,7 @@ namespace TuristickaAgencija.Mvc.Controllers
             }
 
             var aranzman = await _aranzmanService.GetByIdAsync(id.Value);
+
             if (aranzman == null)
             {
                 return NotFound();
@@ -162,6 +169,7 @@ namespace TuristickaAgencija.Mvc.Controllers
         // POST: Aranzmani/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _aranzmanService.DeleteAsync(id);
