@@ -12,6 +12,7 @@ namespace TuristickaAgencija.Mvc.Services
         bool Exists(int id);
         Task<List<Aranzman>> GetByMaxCijenaAsync(decimal maxCijena);
         Task<List<Aranzman>> GetNadolazeciAsync();
+        Task<List<Aranzman>> GetAranzmanByPriceAsc(); //usmeni
     }
 
 }

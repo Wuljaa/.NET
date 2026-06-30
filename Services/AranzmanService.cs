@@ -76,6 +76,12 @@ namespace TuristickaAgencija.Mvc.Services
                 .OrderBy(a => a.DatumPolaska)
                 .ToListAsync();
         }
-    }
 
+        public async Task<List<Aranzman>> GetAranzmanByPriceAsc()
+        {
+            return await _context.Aranzmani
+                .OrderBy(a => a.Cijena)
+                .ToListAsync(); //usmeni
+        }
+    }
 }
